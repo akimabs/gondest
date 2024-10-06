@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"go.uber.org/fx"
 	"github.com/joho/godotenv"
 )
@@ -28,6 +29,9 @@ func main() {
 
 	app := fiber.New()
 	app.Use(cors.New())
+	app.Use(logger.New(logger.Config{
+		Format: "[${ip}]/${time} ${port} ${status} - ${method} ${path}\n",
+	}))
 
 	fxApp := fx.New(
 		domains.Module,

@@ -2,6 +2,7 @@ package {{ .ModuleName }}
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"{{ .AppName }}/utils"
 )
 
 type {{ .ControllerName }} struct {
