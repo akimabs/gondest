@@ -18,8 +18,12 @@ var templatePath = "/usr/local/share/gondest/templates"
 
 var generateCmd = &cobra.Command{
 	Use:   "generate [type] [name]",
-	Short: "Generate a new controller, service, or module",
-	Args:  cobra.ExactArgs(2),
+	Short: "Generate a new controller, service, or module", // Deskripsi singkat
+	Long: `Generate will create a new controller, service, or module based on the type.
+For 'module', it automatically generates a controller, service, and module file.`,
+	Example: `gondest generate module user 
+gondest generate controller post`,
+	Args: cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		typ := args[0]
 		name := args[1]
@@ -41,7 +45,10 @@ var generateCmd = &cobra.Command{
 var initCmd = &cobra.Command{
 	Use:   "init [app-name]",
 	Short: "Initialize a new GoFiber app with gondest structure",
-	Args:  cobra.ExactArgs(1),
+	Long: `This command initializes a new GoFiber project with the standard structure.
+It creates the base domains, services, and controller structure along with a main.go file.`,
+	Example: `gondest init myApp`,
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		appName := args[0]
 
