@@ -50,12 +50,17 @@ myApp/
 
 ### 2. `gondest generate [type] [name]`
 
-Generates files for a new controller, service, or module.
+Generates files for a new controller, service, module, or model.
 
 #### Arguments:
 
-- `type`: The type of file to generate (`controller`, `service`, or `module`).
-- `name`: The name of the module or controller to create.
+- `type`: The type of file to generate (`controller`, `service`, `module`, or `model`).
+- `name`: The name of the module or model to create.
+
+#### Supported types:
+
+- `module`
+- `model`
 
 #### Example:
 
@@ -63,7 +68,30 @@ Generates files for a new controller, service, or module.
 gondest generate module user
 ```
 
-This command will create files like `user.controller.go`, `user.service.go`, and `user.module.go` in the `domains/` directory.
+### 3. `gondest config --[type]`
+
+Configures integrations such as databases or other services.
+
+#### Arguments:
+
+##### Type for Config
+
+The type of integration to configure (e.g., `db`, `redis`, more to come).
+
+- `db`: The type of integration to configure database (e.g., mysql, postgres, sqlserver).
+- `redis`: The type of integration to configure redis.
+
+##### Flags for Databases:
+
+- `--mysql`: Use MySQL as the database.
+- `--postgres`: Use PostgreSQL as the database.
+- `--sqlserver`: Use SQL Server as the database.
+
+#### Example:
+
+```bash
+gondest config db --postgres
+```
 
 ## Flags
 
