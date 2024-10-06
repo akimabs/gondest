@@ -30,13 +30,10 @@ func main() {
 	app.Use(cors.New())
 
 	fxApp := fx.New(
+		domains.Module,
 		fx.Provide(func() *fiber.App {
 			return app
 		}),
-		
-		// Provide the domain module here
-		domains.Module,
-
 		fx.Invoke(func(appController *domains.AppController) {
 			// Register routes here
 			appController.RegisterRoutes(app)
