@@ -1,7 +1,7 @@
 package domains
 
 import (
-	"app_gondest/utils"
+	"{{ .AppName }}/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
