@@ -1,13 +1,13 @@
 # Gondest CLI
 
-Gondest CLI is a tool to simplify the creation of application structure using GoFiber with a modular approach.
+Gondest CLI is a tool to simplify the creation of application structure using GoFiber with a modular approach like NestJS.
 
 ## Installation
 
 To install Gondest CLI:
 
 ```bash
-go install path/to/your/gondest
+to be launch
 ```
 
 ## Basic Commands
