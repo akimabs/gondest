@@ -4,7 +4,15 @@ Gondest CLI is a tool to simplify the creation of application structure using Go
 
 ## Installation
 
-To install Gondest CLI:
+To install Gondest CLI via:
+
+### curl
+
+```bash
+curl -sL https://raw.githubusercontent.com/akimabs/gondest/main/install.sh | bash
+```
+
+### homebrew
 
 ```bash
 to be launch
