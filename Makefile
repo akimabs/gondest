@@ -9,12 +9,20 @@ install:
 		exit 1; \
 	fi
 	go build -o $(BINARY_NAME)
+	@echo "Using sudo to create directories and copy files to system paths."
 	sudo mkdir -p $(TEMPLATE_PATH)
 	sudo cp -r $(TEMPLATE_SRC)/* $(TEMPLATE_PATH)
 	sudo mv $(BINARY_NAME) $(INSTALL_PATH)
 	@echo "Installation complete! Templates are located at $(TEMPLATE_PATH)."
+	@echo "enjoy"
+	@echo " ▗▄▄▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖"
+	@echo "▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌  █▐▌   ▐▌     █  "
+	@echo "▐▌▝▜▌▐▌ ▐▌▐▌ ▝▜▌▐▌  █▐▛▀▀▘ ▝▀▚▖  █  "
+	@echo "▝▚▄▞▘▝▚▄▞▘▐▌  ▐▌▐▙▄▄▀▐▙▄▄▖▗▄▄▞▘  █  "
+
 
 uninstall:
+	@echo "Using sudo to remove files from system paths."
 	sudo rm -rf $(TEMPLATE_PATH)
 	sudo rm $(INSTALL_PATH)/$(BINARY_NAME)
 	@echo "Uninstallation complete!"
