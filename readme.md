@@ -42,6 +42,8 @@ myApp/
 |   |-- app.controller.go
 |   |-- app.service.go
 |   |-- app.module.go
+|-- utils/
+|   |-- response.go
 |-- main.go
 |-- go.mod
 ```
