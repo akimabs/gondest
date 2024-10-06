@@ -13,6 +13,7 @@ import (
 )
 
 var moduleName string
+var templatePath = "/usr/local/share/gondest/templates"
 
 var generateCmd = &cobra.Command{
 	Use:   "generate [type] [name]",
@@ -68,6 +69,8 @@ var initCmd = &cobra.Command{
 		// Create main.go
 		createFileFromTemplate(appName, "main.go", "default/main.go.tpl")
 
+		installDependency()
+
 		fmt.Printf("Project %s initialized with GoFiber and default structure.\n", appName)
 	},
 }
@@ -86,30 +89,24 @@ func initGoMod(appName string) {
 		return
 	}
 
+}
+
+func installDependency() {
 	// // Add GoFiber dependency
-	// cmd = exec.Command("go", "get", "github.com/gofiber/fiber/v2")
-	// err = cmd.Run()
-	// if err != nil {
-	// 	fmt.Printf("Error adding GoFiber dependency: %v\n", err)
-	// 	return
-	// }
-	// fmt.Println("go.mod initialized with GoFiber.")
+	cmd := exec.Command("go", "mod", "tidy")
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("Error adding GoFiber dependency: %v\n", err)
+		return
+	}
+	fmt.Println("go.mod initialized with GoFiber.")
+
 }
 
 // createFileFromTemplate creates a file from a template
 func createFileFromTemplate(name, filename, tplName string) {
-	// Get the directory of the executable
-	execPath, err := os.Executable()
-	if err != nil {
-		fmt.Println("Error getting executable path:", err)
-		return
-	}
-
-	// Create the full path to the templates directory
-	templatesDir := filepath.Join(filepath.Dir(execPath), "templates")
-
 	// Parse the template file
-	tplPath := filepath.Join(templatesDir, tplName)
+	tplPath := filepath.Join(templatePath, tplName)
 	tpl, err := template.ParseFiles(tplPath)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
@@ -124,6 +121,7 @@ func createFileFromTemplate(name, filename, tplName string) {
 	defer f.Close()
 
 	data := map[string]string{
+		"AppName":        name, // Pass appName to the template
 		"ModuleName":     cases.Title(language.English).String(moduleName),
 		"ControllerName": cases.Title(language.English).String(name) + "Controller",
 		"ServiceName":    cases.Title(language.English).String(name) + "Service",
