@@ -54,3 +54,13 @@ This command will create files like `user.controller.go`, `user.service.go`, and
 ## Flags
 
 - `-h, --help`: Displays help for each command.
+
+## Contributors
+
+Special thanks to [ChatGPT](https://openai.com/chatgpt) for assistance in code generation and documentation.
+
+List generated with [contributors-img](https://contrib.rocks). [Updates every 24 hrs]
+
+<a href="https://github.com/akimabs/gondest/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=akimabs/gondest" />
+</a>
