@@ -2,6 +2,10 @@
 
 Gondest CLI is a tool to simplify the creation of application structure using GoFiber with a modular approach like NestJS.
 
+## Requirements
+
+- Go must be installed on your machine. You can download and install it from [here](https://golang.org/dl/).
+
 ## Installation
 
 To install Gondest CLI via:
