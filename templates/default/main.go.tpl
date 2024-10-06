@@ -13,6 +13,10 @@ func main() {
 	app := fiber.New()
 
 	fxApp := fx.New(
+		fx.Provide(func() *fiber.App {
+			return app
+		}),
+		
 		// Provide the domain module here
 		domains.Module,
 

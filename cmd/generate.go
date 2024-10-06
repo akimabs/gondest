@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/spf13/cobra"
@@ -26,10 +27,10 @@ var generateCmd = &cobra.Command{
 		// Automatically generate controller, service, and module if type is "module"
 		if typ == "module" {
 			moduleName = name // Set the module name for all files
-			createDirectoryStructure(moduleName)
 			createFileFromTemplate(name, "domains/"+moduleName+"/"+name+".controller.go", "controller.go.tpl")
 			createFileFromTemplate(name, "domains/"+moduleName+"/"+name+".service.go", "service.go.tpl")
 			createFileFromTemplate(name, "domains/"+moduleName+"/"+name+".module.go", "module.go.tpl")
+			updateMainGo(moduleName)
 			fmt.Printf("Module %s created with controller, service, and module files in domains.\n", name)
 		} else {
 			fmt.Printf("Key %s that's not included in the command \n", name)
@@ -105,6 +106,14 @@ func installDependency() {
 
 // createFileFromTemplate creates a file from a template
 func createFileFromTemplate(name, filename, tplName string) {
+	// Ensure the directory structure exists
+	dir := filepath.Dir(filename)
+	err := os.MkdirAll(dir, os.ModePerm) // Ensure the directory is created
+	if err != nil {
+		fmt.Println("Error creating directory structure:", err)
+		return
+	}
+
 	// Parse the template file
 	tplPath := filepath.Join(templatePath, tplName)
 	tpl, err := template.ParseFiles(tplPath)
@@ -130,6 +139,90 @@ func createFileFromTemplate(name, filename, tplName string) {
 	if err := tpl.Execute(f, data); err != nil {
 		fmt.Println("Error executing template:", err)
 	}
+}
+
+// updateMainGo updates main.go to add the new module import, module to fxApp, and controller to fx.Invoke
+func updateMainGo(moduleName string) {
+	// Convert the module name to a capitalized version for the import alias (e.g., Auth)
+	moduleAlias := cases.Title(language.English).String(moduleName)
+
+	// Define the module import and fxApp entry
+	moduleImport := fmt.Sprintf(`%s "app_gondest/domains/%s"`, moduleAlias, moduleName)
+	moduleEntry := fmt.Sprintf(`%s.Module,`, moduleAlias)
+	controllerEntry := fmt.Sprintf("%sController *%s.%sController", moduleName, moduleAlias, moduleAlias)
+	registerRouteLine := fmt.Sprintf("\t\t\t%sController.RegisterRoutes(app)", moduleName) // Ensure correct tabbing
+
+	// Read the main.go file
+	mainFile := "main.go"
+	content, err := os.ReadFile(mainFile)
+	if err != nil {
+		fmt.Printf("Error reading main.go: %v\n", err)
+		return
+	}
+
+	// Convert to string
+	mainContent := string(content)
+
+	// Check if the module is already added
+	if strings.Contains(mainContent, moduleImport) {
+		fmt.Printf("Module %s already exists in main.go\n", moduleName)
+		return
+	}
+
+	// Add the import for the new module
+	importSection := `import (`
+	importIndex := strings.Index(mainContent, importSection)
+	if importIndex != -1 {
+		importIndex += len(importSection)
+		mainContent = mainContent[:importIndex] + "\n\t" + moduleImport + mainContent[importIndex:]
+	}
+
+	// Add the module entry to fxApp
+	fxNewSection := `fx.New(`
+	fxNewIndex := strings.Index(mainContent, fxNewSection)
+	if fxNewIndex != -1 {
+		fxNewIndex += len(fxNewSection)
+		mainContent = mainContent[:fxNewIndex] + "\n\t\t" + moduleEntry + mainContent[fxNewIndex:]
+	}
+
+	// Update the fx.Invoke section with the new controller and register route
+	fxInvokeSection := `fx.Invoke(`
+	fxInvokeIndex := strings.Index(mainContent, fxInvokeSection)
+	if fxInvokeIndex != -1 {
+		// Locate the function signature
+		invokeEndIndex := strings.Index(mainContent[fxInvokeIndex:], `})`)
+		invokeBlock := mainContent[fxInvokeIndex : fxInvokeIndex+invokeEndIndex]
+
+		// Check if the controller is already included
+		if !strings.Contains(invokeBlock, controllerEntry) {
+			// Find the opening of the function signature
+			funcIndex := strings.Index(invokeBlock, `func(`)
+			if funcIndex != -1 {
+				funcEndIndex := strings.Index(invokeBlock[funcIndex:], `)`)
+				invokeBlock = invokeBlock[:funcIndex+funcEndIndex] + ", " + controllerEntry + invokeBlock[funcIndex+funcEndIndex:]
+				mainContent = mainContent[:fxInvokeIndex] + invokeBlock + mainContent[fxInvokeIndex+invokeEndIndex:]
+			}
+		}
+
+		// Add the RegisterRoutes call inside the fx.Invoke block
+		if !strings.Contains(mainContent, registerRouteLine) {
+			// Add after the last RegisterRoutes(app) call
+			registerRoutesIndex := strings.LastIndex(mainContent[:fxInvokeIndex+invokeEndIndex], "RegisterRoutes(app)")
+			if registerRoutesIndex != -1 {
+				registerRoutesEnd := strings.Index(mainContent[registerRoutesIndex:], "\n")
+				mainContent = mainContent[:registerRoutesIndex+registerRoutesEnd] + "\n" + registerRouteLine + mainContent[registerRoutesIndex+registerRoutesEnd:]
+			}
+		}
+	}
+
+	// Write the modified content back to main.go
+	err = os.WriteFile(mainFile, []byte(mainContent), os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error writing to main.go: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Module %s added to main.go\n", moduleName)
 }
 
 // createDirectoryStructure creates the necessary directory structure for the module
