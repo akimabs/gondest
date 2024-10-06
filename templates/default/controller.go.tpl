@@ -1,6 +1,7 @@
 package domains
 
 import (
+	"app_gondest/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -18,6 +19,10 @@ func (c *AppController) RegisterRoutes(app *fiber.App) {
 }
 
 func (c *AppController) GetApp(ctx *fiber.Ctx) error {
-	data := c.service.GetApp()
-	return ctx.SendString(data)
+	data, err := c.service.GetApp()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(utils.Error(err.Error(), fiber.StatusInternalServerError))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(utils.Success("App retrieved successfully", data, fiber.StatusOK))
 }

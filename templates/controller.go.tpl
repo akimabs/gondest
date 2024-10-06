@@ -19,6 +19,10 @@ func (c *{{ .ControllerName }}) RegisterRoutes(app *fiber.App) {
 }
 
 func (c *{{ .ControllerName }}) Get{{ .ControllerName }}(ctx *fiber.Ctx) error {
-	data := c.service.Get{{ .ControllerName }}()
-	return ctx.SendString(data)
+	data, err := c.service.Get{{ .ControllerName }}()
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(utils.Error(err.Error(), fiber.StatusInternalServerError))
+	}
+	
+	return ctx.Status(fiber.StatusOK).JSON(utils.Success("App retrieved successfully", data, fiber.StatusOK))
 }

@@ -73,6 +73,7 @@ It creates the base domains, services, and controller structure along with a mai
 		createFileFromTemplate(appName, "domains/app.controller.go", "default/controller.go.tpl")
 		createFileFromTemplate(appName, "domains/app.service.go", "default/service.go.tpl")
 		createFileFromTemplate(appName, "domains/app.module.go", "default/module.go.tpl")
+		createFileFromTemplate(appName, "utils/response.go", "default/response.go.tpl")
 		createFileFromTemplate(appName, "main.go", "default/main.go.tpl")
 		createFileFromTemplate(appName, ".env", "default/.env.tpl")
 		createFileFromTemplate(appName, ".env.example", "default/.env.example.tpl")

@@ -6,6 +6,6 @@ func NewAppService() *AppService {
 	return &AppService{}
 }
 
-func (s *AppService) GetApp() string {
-	return "Hello World"
+func (s *AppService) GetApp() (string, error) {
+	return "Hello World", nil
 }
