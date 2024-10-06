@@ -7,5 +7,5 @@ func New{{ .ServiceName }}() *{{ .ServiceName }} {
 }
 
 func (s *{{ .ServiceName }}) Get{{ .ControllerName }}() string {
-	return "{{ .ControllerName }} Data"
+	return "Hi {{ .ServiceName }}"
 }
